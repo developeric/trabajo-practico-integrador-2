@@ -49,6 +49,8 @@ const userSchema = new Schema({
       type: Date,
     },
   },
+},{
+  versionKey:false
 });
 
 export const UserModel = model("User", userSchema);

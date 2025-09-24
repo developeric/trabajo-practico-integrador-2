@@ -1,6 +1,6 @@
-import { hashPassword } from "../helpers/bcrypt.helper";
-import { generateToken } from "../helpers/generateToken.helper";
-import { UserModel } from "../models/user.model";
+import { comparePassword, hashPassword } from "../helpers/bcrypt.helper.js";
+import { generateToken } from "../helpers/generateToken.helper.js";
+import { UserModel } from "../models/user.model.js";
 
 //REGISTER
 export const Register = async (req, res) => {
@@ -8,7 +8,7 @@ export const Register = async (req, res) => {
   const { username, email, password, role, profile } = req.body;
   try {
     //Creación
-    const hashedPassword = hashPassword(password);
+    const hashedPassword = await hashPassword(password);
     const user = await UserModel.create({
       username,
       email,
@@ -20,6 +20,7 @@ export const Register = async (req, res) => {
       .status(201)
       .json({ ok: true, msg: "Registrado Correctamente", data: user });
   } catch (error) {
+    console.log(error)
     return res
       .status(500)
       .json({ ok: false, msg: "No Registrado", data: null });
@@ -30,9 +31,9 @@ export const Register = async (req, res) => {
 export const Login = async (req, res) => {
   const { username, password } = req.body;
 
-  const logueado = await UserModel.findOne({ username });
+  const user = await UserModel.findOne({ username });
 
-  if (!logueado) {
+  if (!user) {
     return res.status(400).json({ ok: false, msg: "Algo ha Salido Mal" });
   }
 
