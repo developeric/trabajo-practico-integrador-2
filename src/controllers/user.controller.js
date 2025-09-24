@@ -59,3 +59,16 @@ export const deleteUser = async (req, res) => {
     return res.status(404).json({ ok: false, msg: "No Eliminado", data: null });
   }
 };
+
+
+//GetProfiles
+export const userWithProfile = async (req,res)=>{
+    try {
+        const perfil = user.profile
+        if(perfil){
+            return res.status(200).json({ok:true,msg:"Aquí tienes los Perfiles:"})
+        }
+    } catch (error) {
+        
+    }
+}
