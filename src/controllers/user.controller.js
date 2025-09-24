@@ -1,38 +1,61 @@
-import { hashPassword } from "../helpers/bcrypt.helper";
-import { UserModel } from "../models/user.model";
+import { UserModel } from "../models/user.model.js";
 
-export const createUser = async (req, res) => {
+//Update
+export const updateUser = async (req, res) => {
   //Desestructuración
-  const { username, email, password, role, profile } = req.body;
+  const { id } = req.params;
+  const data = req.body;
   try {
-    //Creación
-    const hashedPassword = hashPassword(password);
-    const user = await createUser.create({
-      username,
-      email,
-      password: hashedPassword,
-      role,
-      profile,
-    });
+    const document = await UserModel.findByIdAndUpdate(id, data, { new: true });
     return res
-      .status(201)
-      .json({ ok: true, msg: "Creado Correctamente", data: user });
+      .status(200)
+      .json({ msg: "Actualizado Correctamente", data: document });
   } catch (error) {
-    return res.status(500).json({ ok: false, msg: "No Creado", data: null });
+    return res.status(400).json({ msg: "No Actualizado", data: null });
   }
 };
 
-export const Login = async (req, res) => {
-  const { username, password } = req.body;
-
-  const logueado = await UserModel.findOne({ username });
-
-  if (!logueado) {
-    return res.status(400).json({ ok: false, msg: "Algo ha Salido Mal" });
+//FindAll
+export const getUser = async (req, res) => {
+  try {
+    const document = await UserModel.find();
+    return res
+      .status(200)
+      .json({ ok: true, msg: "Obtenido Correctamente", data: document });
+  } catch (error) {
+    console.log(error);
+    return res
+      .status(404)
+      .json({ ok: false, msg: "No Encontrados", data: null });
   }
-  
-  const validPassword = await comparePassword(password, user.password);
-  if (!validPassword) {
-    return res.status(401).json({ ok: false, msg: "Algo ha salido Mal" });
+};
+
+//FindbyID
+export const getUserByID = async (req, res) => {
+  const { id } = req.params;
+  try {
+    const document = await UserModel.findById(id);
+    return res
+      .status(200)
+      .json({ ok: true, msg: "Obtenido Correctamente", data: document });
+  } catch (error) {
+    console.log(error);
+    return res
+      .status(404)
+      .json({ ok: false, msg: "No Encontrado", data: null });
+  }
+};
+
+//Delete
+export const deleteUser = async (req, res) => {
+  const { id } = req.params;
+  try {
+    const document = await UserModel.findByIdAndDelete(id);
+    return res
+      .status(200)
+      .json({ ok: true, msg: "Eliminado Correctamente", data: document });
+  } catch (error) {
+    console.log(error);
+    return res.status(404).json({ ok: false, msg: "No Eliminado", data: null });
   }
 };

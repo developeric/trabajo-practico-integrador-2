@@ -12,3 +12,6 @@ export const authMiddleware = (req, res, next) => {
     res.status(500).json({ message: "Token Invalido" });
   }
 };
+
+
+//Verifica y lee el Token

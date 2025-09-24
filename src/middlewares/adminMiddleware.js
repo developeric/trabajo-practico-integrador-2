@@ -1,7 +1,7 @@
 export const AdminMiddleware = async (req, res,next) => {
-  const admin = req.user;
+  const user = req.user;
   try {
-    if (admin.role === "admin") {
+    if (user.role === "admin") {
       return next()
     }
   } catch (error) {
@@ -9,3 +9,5 @@ export const AdminMiddleware = async (req, res,next) => {
     return res.status(500).json({ Message: "Internal Error Server" });
   }
 };
+
+//Revisa que el rol del usuario sea igual a Administrador

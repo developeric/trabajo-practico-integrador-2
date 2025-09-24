@@ -1,15 +1,82 @@
 import { CommentModel } from "../models/comment.model.js";
 
+//Create
 export const createComment = async (req, res) => {
   try {
     //Desestructuración
-    const { name, description } = req.body;
-    //Creación
-    const comment = await CommentModel.create(req.body);
+    const { content, author, article } = req.body;
+    //creación
+    const document = await CommentModel.create(req.body);
     return res
       .status(201)
-      .json({ ok: true, msg: "Creado Correctamente", data: comment });
+      .json({ ok: true, msg: "Creado Correctamente", data: document });
   } catch (error) {
-    return res.status(500).json({ ok: false, msg: "No Creado", data: null });
+    return res.status(400).json({ ok: false, msg: "No Creado", data: null });
+  }
+};
+
+//Update
+export const updateComment = async (req, res) => {
+  //Desestructuración
+  const { id } = req.params;
+  const { content } = req.body;
+  try {
+    const document = await CommentModel.findByIdAndUpdate(
+      id,
+      {
+        content,
+      },
+      { new: true }
+    );
+    return res
+      .status(200)
+      .json({ msg: "Actualizado Correctamente", data: document });
+  } catch (error) {
+    return res.status(400).json({ msg: "No Actualizado", data: null });
+  }
+};
+
+//FindAll
+export const getComment = async (req, res) => {
+  try {
+    const document = await CommentModel.find();
+    return res
+      .status(200)
+      .json({ ok: true, msg: "Obtenido Correctamente", data: document });
+  } catch (error) {
+    console.log(error);
+    return res
+      .status(404)
+      .json({ ok: false, msg: "No Encontrados", data: null });
+  }
+};
+
+//FindbyID
+export const getCommentByID = async (req, res) => {
+  const { id } = req.params;
+  try {
+    const document = await CommentModel.findById(id);
+    return res
+      .status(200)
+      .json({ ok: true, msg: "Obtenido Correctamente", data: document });
+  } catch (error) {
+    console.log(error);
+    return res
+      .status(404)
+      .json({ ok: false, msg: "No Encontrado", data: null });
+  }
+};
+
+//Delete
+export const deleteComment = async (req, res) => {
+  const { id } = req.params;
+  try {
+    const document = await CommentModel.findByIdAndDelete(id);
+    return res
+      .status(200)
+      .json({ ok: true, msg: "Eliminado Correctamente", data: document });
+  } catch (error) {
+    console.log(error);
+    return res.status(404).json({ ok: false, msg: "No Eliminado", data: null });
   }
 };
