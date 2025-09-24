@@ -18,7 +18,7 @@ export const updateUser = async (req, res) => {
 //FindAll
 export const getUser = async (req, res) => {
   try {
-    const document = await UserModel.find();
+    const document = await UserModel.find().populate("Articles");
     return res
       .status(200)
       .json({ ok: true, msg: "Obtenido Correctamente", data: document });
