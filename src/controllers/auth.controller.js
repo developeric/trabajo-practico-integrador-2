@@ -6,9 +6,24 @@ import { UserModel } from "../models/user.model.js";
 export const Register = async (req, res) => {
   //Desestructuración
   const { username, email, password, role, profile } = req.body;
+  console.log(req.body);
   try {
     //Creación
     const hashedPassword = await hashPassword(password);
+
+    const emailExiste = await UserModel.findOne({ email: email });
+    if (emailExiste) {
+      return res
+        .status(400)
+        .json({ ok: false, msg: "Este email ya está Registrado" });
+    }
+
+    const userExiste = await UserModel.findOne({ username: username });
+    if (userExiste) {
+      return res
+        .status(400)
+        .json({ ok: false, msg: "Este Username ya está Registrado" });
+    }
     const user = await UserModel.create({
       username,
       email,
@@ -16,11 +31,12 @@ export const Register = async (req, res) => {
       role,
       profile,
     });
+
     return res
       .status(201)
       .json({ ok: true, msg: "Registrado Correctamente", data: user });
   } catch (error) {
-    console.log(error)
+    console.log(error);
     return res
       .status(500)
       .json({ ok: false, msg: "No Registrado", data: null });
@@ -55,7 +71,6 @@ export const Login = async (req, res) => {
   });
   return res.status(200).json({ ok: true, msg: "Logueado Correctamente" });
 };
-
 
 //LOGOUT
 export const Logout = (req, res) => {
