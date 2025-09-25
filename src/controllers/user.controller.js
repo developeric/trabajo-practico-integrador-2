@@ -18,7 +18,7 @@ export const updateUser = async (req, res) => {
 //FindAll
 export const getUser = async (req, res) => {
   try {
-    const document = await UserModel.find().populate("articles");
+    const document = await UserModel.find().populate("article");
     return res
       .status(200)
       .json({ ok: true, msg: "Obtenido Correctamente", data: document });
@@ -34,7 +34,13 @@ export const getUser = async (req, res) => {
 export const getUserByID = async (req, res) => {
   const { id } = req.params;
   try {
-    const document = await UserModel.findById(id);
+    const document = await UserModel.findById(id).populate("article","comment");
+    if (!document) {
+      console.log(document)
+      return res
+        .status(404)
+        .json({ ok: false, msg: "No Encontrado", data: null });
+    }
     return res
       .status(200)
       .json({ ok: true, msg: "Obtenido Correctamente", data: document });
@@ -51,6 +57,10 @@ export const deleteUser = async (req, res) => {
   const { id } = req.params;
   try {
     const document = await UserModel.findByIdAndDelete(id);
+    if (!document) {
+      console.log(document);
+      return res.status(400).json({ msg: "No se ha Eliminado" });
+    }
     return res
       .status(200)
       .json({ ok: true, msg: "Eliminado Correctamente", data: document });
@@ -101,12 +111,14 @@ export const updateUserWithProfile = async (req, res) => {
   }
 };
 
-
 //FindUserWithArticlesAndComments
 export const getUserWithAll = async (req, res) => {
   const { id } = req.params;
   try {
-    const document = await UserModel.findById(id).populate("articles","comment");
+    const document = await UserModel.findById(id).populate(
+      "articles",
+      "comment"
+    );
     return res
       .status(200)
       .json({ ok: true, msg: "Obtenido Correctamente", data: document });

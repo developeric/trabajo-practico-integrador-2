@@ -59,7 +59,7 @@ const userSchema = new Schema(
 
 //Crea un campo virtual para que funcione el Populate
 //
-userSchema.virtual("articles", {
+userSchema.virtual("article", {
   ref: "Article",
   localField: "_id",
   foreignField: "author",
