@@ -7,8 +7,8 @@ import { routerUser } from "./user.routes.js";
 
 export const routes = Router();
 
-routes.use(routerArticle);
 routes.use(routerAuth);
+routes.use(routerArticle);
 routes.use(routerComment);
 routes.use(routerTag);
 routes.use(routerUser);

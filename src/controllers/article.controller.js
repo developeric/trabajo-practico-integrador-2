@@ -1,5 +1,5 @@
+import { populate } from "dotenv";
 import { ArticleModel } from "../models/article.model.js";
-
 
 //Create
 export const createArticle = async (req, res) => {
@@ -12,6 +12,7 @@ export const createArticle = async (req, res) => {
       .status(201)
       .json({ ok: true, msg: "Creado Correctamente", data: document });
   } catch (error) {
+    console.log(error);
     return res.status(400).json({ ok: false, msg: "No Creado", data: null });
   }
 };
@@ -44,7 +45,11 @@ export const updateArticle = async (req, res) => {
 //FindAll
 export const getArticle = async (req, res) => {
   try {
-    const document = await ArticleModel.find();
+    const document = await ArticleModel.find().populate(
+      "author tag",
+      "-password -profile"
+    );
+
     return res
       .status(200)
       .json({ ok: true, msg: "Obtenido Correctamente", data: document });
@@ -60,7 +65,7 @@ export const getArticle = async (req, res) => {
 export const getArticleByID = async (req, res) => {
   const { id } = req.params;
   try {
-    const document = await ArticleModel.findById(id);
+    const document = await ArticleModel.findById(id).populate("author tag");
     return res
       .status(200)
       .json({ ok: true, msg: "Obtenido Correctamente", data: document });
@@ -83,5 +88,22 @@ export const deleteArticle = async (req, res) => {
   } catch (error) {
     console.log(error);
     return res.status(404).json({ ok: false, msg: "No Eliminado", data: null });
+  }
+};
+
+
+//FindArticlewithLogUser
+export const getArticleWithUser = async (req, res) => {
+  const user = req.user
+  try {
+    const document = await ArticleModel.find({author:user.id});
+    return res
+      .status(200)
+      .json({ ok: true, msg: "Obtenido Correctamente", data: document });
+  } catch (error) {
+    console.log(error);
+    return res
+      .status(404)
+      .json({ ok: false, msg: "No Encontrado", data: null });
   }
 };

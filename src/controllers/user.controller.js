@@ -1,3 +1,4 @@
+
 import { UserModel } from "../models/user.model.js";
 
 //Update
@@ -34,9 +35,27 @@ export const getUser = async (req, res) => {
 export const getUserByID = async (req, res) => {
   const { id } = req.params;
   try {
-    const document = await UserModel.findById(id).populate("article","comment");
+    const document = await UserModel.findById(id).populate({
+      //
+      path: "article",
+      model:"Article",
+      select:"title -author",
+      //
+      populate: {
+        path: "comment",
+        model:"Comment",
+        select:"content",
+      //
+        populate:{
+          path:"author",
+          model:"User",
+          select:"author"
+        }
+      //
+      },
+    });
     if (!document) {
-      console.log(document)
+      console.log(document);
       return res
         .status(404)
         .json({ ok: false, msg: "No Encontrado", data: null });

@@ -1,3 +1,4 @@
+import { populate } from "dotenv";
 import { TagModel } from "../models/tag.model.js";
 
 //Create
@@ -33,6 +34,7 @@ export const updateTag = async (req, res) => {
       .status(200)
       .json({ msg: "Actualizado Correctamente", data: document });
   } catch (error) {
+    console.log(error)
     return res.status(400).json({ msg: "No Actualizado", data: null });
   }
 };
@@ -56,7 +58,15 @@ export const getTag = async (req, res) => {
 export const getTagByID = async (req, res) => {
   const { id } = req.params;
   try {
-    const document = await TagModel.findById(id);
+    const document = await TagModel.findById(id).populate({
+      path:"article",
+      model:"Article",
+      populate:{
+        path:"author",
+        model:"User",
+        select:"username"
+      }
+    });
     return res
       .status(200)
       .json({ ok: true, msg: "Obtenido Correctamente", data: document });

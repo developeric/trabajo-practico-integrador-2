@@ -1,9 +1,15 @@
 import { Router } from "express";
-import { createArticle, deleteArticle, getArticle, getArticleByID, updateArticle } from "../controllers/article.controller.js";
+import { createArticle, deleteArticle, getArticle, getArticleByID, getArticleWithUser, updateArticle } from "../controllers/article.controller.js";
+import { authMiddleware } from "../middlewares/authMiddleware.js";
+import { ownerOrAdmin } from "../middlewares/ownerOrAdminMiddleware.js";
 export const routerArticle = Router();
 
-routerArticle.post("/article",createArticle)
-routerArticle.get("/article",getArticle)
-routerArticle.put("/article/:id",updateArticle)
-routerArticle.get("/article/:id",getArticleByID)
-routerArticle.delete("/article/:id",deleteArticle)
+routerArticle.use(authMiddleware)
+
+routerArticle.post("/articles",createArticle)
+routerArticle.get("/articles",getArticle)
+//ArticleWithLogUser
+routerArticle.get("/articles/my",getArticleWithUser,getArticle)
+routerArticle.put("/articles/:id",ownerOrAdmin,updateArticle)
+routerArticle.get("/articles/:id",getArticleByID)
+routerArticle.delete("/articles/:id",ownerOrAdmin,deleteArticle)

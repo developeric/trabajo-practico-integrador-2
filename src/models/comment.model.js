@@ -16,6 +16,8 @@ const commentSchema = new Schema({
     type: Types.ObjectId,
     ref: "Article",
   },
+},{
+  versionKey:false,
 });
 
 export const CommentModel = model("Comment", commentSchema);
