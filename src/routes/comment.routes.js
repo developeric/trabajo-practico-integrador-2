@@ -1,12 +1,16 @@
 import { Router } from "express";
-import { createComment, deleteComment, getComment, getCommentByID, updateComment } from "../controllers/comment.controller.js";
+import { createComment, deleteComment, getComment, getCommentByID, getCommentsMy, getCommentWithAuthor, updateComment } from "../controllers/comment.controller.js";
 import { authMiddleware } from "../middlewares/authMiddleware.js";
 import { ownerOrAdmin } from "../middlewares/ownerOrAdminMiddleware.js";
 export const routerComment = Router();
 
 routerComment.use(authMiddleware)
-routerComment.post("/comments/article/:articleId",createComment)
-routerComment.get("/comments",getComment)
+//
+routerComment.post("/comments",createComment)
+//
+routerComment.get("/comments/article/:articleId",getCommentWithAuthor)
+//
+routerComment.get("/comments/my",getCommentsMy)
+//
 routerComment.put("/comments/:id",updateComment)
-routerComment.get("/comments/:id",ownerOrAdmin,getCommentByID)
 routerComment.delete("/comments/:id",ownerOrAdmin,deleteComment)

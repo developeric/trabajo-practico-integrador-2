@@ -1,3 +1,4 @@
+import { ArticleModel } from "../models/article.model.js";
 import { CommentModel } from "../models/comment.model.js";
 
 //Create
@@ -11,6 +12,7 @@ export const createComment = async (req, res) => {
       .status(201)
       .json({ ok: true, msg: "Creado Correctamente", data: document });
   } catch (error) {
+    console.log(error);
     return res.status(400).json({ ok: false, msg: "No Creado", data: null });
   }
 };
@@ -78,5 +80,49 @@ export const deleteComment = async (req, res) => {
   } catch (error) {
     console.log(error);
     return res.status(404).json({ ok: false, msg: "No Eliminado", data: null });
+  }
+};
+
+//FindbyIdWithAuthor
+export const getCommentWithAuthor = async (req, res) => {
+  const { articleId } = req.params;
+  try {
+    const article = await ArticleModel.findById(articleId)
+      .populate("author", "username profile.firstName profile.lastName")
+      .populate({
+        path: "comment",
+        populate: {
+          path: "author",
+          select: "username profile.firstName profile.lastName",
+        },
+      });
+    //
+    return res.status(200).json({
+      msg: "Comentarios del artículo obtenidos correctamente",
+      data: article,
+    });
+  } catch (error) {
+    console.log(error);
+    return res
+      .status(404)
+      .json({ ok: false, msg: "No Encontrado", data: null });
+  }
+};
+
+
+//CommentsMy
+//FindAll
+export const getCommentsMy = async (req, res) => {
+  const user = req.user
+  try {
+    const document = await CommentModel.find({author:user.id});
+    return res
+      .status(200)
+      .json({ ok: true, msg: "Obtenido Correctamente", data: document });
+  } catch (error) {
+    console.log(error);
+    return res
+      .status(404)
+      .json({ ok: false, msg: "No Encontrados", data: null });
   }
 };
